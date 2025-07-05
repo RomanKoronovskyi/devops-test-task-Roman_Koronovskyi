@@ -1,5 +1,7 @@
 # devops-test-task-Roman_Koronovskyi
 
+![run-script](https://github.com/RomanKoronovskyi/devops-test-task-Roman_Koronovskyi1/actions/workflows/run-script.yml/badge.svg)
+
 This repository contains a Bash script and GitHub Actions workflow.  
 
 ## Project description
