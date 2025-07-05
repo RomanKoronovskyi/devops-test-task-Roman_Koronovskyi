@@ -1,0 +1,52 @@
+name: run-script
+on:
+  push:
+    branches: [main]
+  pull_request: 
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      log_filename:
+        description: 'Optional log filename'
+        required: false
+        default: ''
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set execution permission
+      run: chmod +x ./scripts/hello.sh
+
+    - name: Run script
+      run: |
+        LOG_NAME="${{ github.event.inputs.log_filename }}"
+        if [ -z "$LOG_NAME" ]; then
+          ./scripts/hello.sh
+        else
+          ./scripts/hello.sh "$LOG_NAME"
+        fi
+    - name: Validate output
+      run: |
+        LOG_FILE=$(ls logs/log-*.txt | tail -n 1)
+
+        echo "Checking if log file exists"
+        [ -f "$LOG_FILE" ] || { echo "Log file not found"; exit 1; }
+
+        echo "Checking greeting message"
+        grep -q "Hello from Bash!" "$LOG_FILE" || { echo "Greeting message not found"; exit 1; }
+
+        echo "Checking timestamp"
+        grep -Eq '[0-9]{8}_[0-9]{6}' "$LOG_FILE" || { echo "Timestamp missing"; exit 1; }
+
+        echo "Checking file count is numeric"
+        grep -Eq '[0-9]+' "$LOG_FILE" || { echo "File count missing or invalid"; exit 1; }
+
+    - name: Upload log as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: log-file
+        path: logs/log-*.txt
