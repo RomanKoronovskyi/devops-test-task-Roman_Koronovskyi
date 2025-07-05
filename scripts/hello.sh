@@ -1,8 +1,8 @@
 #!/bin/bash
 
 CurrTime=$(date +"%Y%m%d_%H%M%S")
-PathToOutput="../output"
-PathToLogs="../logs"
+PathToOutput="output"
+PathToLogs="logs"
 PathToHistory="$PathToLogs/history.txt"
 
 if [ -n "$1" ]; then
